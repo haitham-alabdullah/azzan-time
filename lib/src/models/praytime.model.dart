@@ -1,8 +1,25 @@
 class PrayTime {
-  PrayTime();
+  final int id;
+  final String title;
+  final String time;
 
-  factory PrayTime.fromJson(Map<String, String> json) {
-    print(json);
-    return PrayTime();
+  PrayTime(this.id, this.title, this.time);
+
+  @override
+  String toString() {
+    return '$title - $time';
+  }
+
+  hours() {
+    return int.parse(time[0] + time[1]);
+  }
+
+  minutes() {
+    return int.parse(time[3] + time[4]);
+  }
+
+  getDateTime() {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day, hours(), minutes());
   }
 }
