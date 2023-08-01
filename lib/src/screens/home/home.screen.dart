@@ -22,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    Get.find<TimeProvider>().load();
     timer = Timer.periodic(
       const Duration(seconds: 1),
       (Timer t) => Get.find<TimeProvider>().updateCurrentTime(),
@@ -49,13 +50,27 @@ class _HomeScreenState extends State<HomeScreen> {
           vertical: 20,
           horizontal: 16,
         ),
-        child: Column(
+        child: Stack(
           children: [
-            DateWidget(),
-            SizedBox(height: 10),
-            TimingWidget(),
-            Spacer(),
-            ReminingTimeWidget(),
+            Positioned.fill(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(height: 10),
+                    DateWidget(),
+                    SizedBox(height: 10),
+                    TimingWidget(),
+                    SizedBox(height: 60),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Center(child: ReminingTimeWidget()),
+            )
           ],
         ),
       ),

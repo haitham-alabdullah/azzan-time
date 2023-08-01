@@ -1,4 +1,5 @@
 import 'package:azzan/src/classes/themes.class.dart';
+import 'package:azzan/src/providers/main.provider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -17,11 +18,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Get.find<MainProvider>();
     return GetMaterialApp(
       title: 'Azzan-Timing',
       theme: Themes.themeData,
-      locale: const Locale('ar', 'SA'),
-      fallbackLocale: const Locale('en', 'US'),
+      locale: provider.locale,
+      fallbackLocale: const Locale('en'),
       home: const MainScreen(),
       translations: AzzanTranslations(),
     );

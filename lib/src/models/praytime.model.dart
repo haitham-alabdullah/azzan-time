@@ -18,8 +18,7 @@ class PrayTime {
     return int.parse(time[3] + time[4]);
   }
 
-  getDateTime() {
-    final now = DateTime.now();
+  getDateTime(DateTime now) {
     return DateTime(now.year, now.month, now.day, hours(), minutes());
   }
 }

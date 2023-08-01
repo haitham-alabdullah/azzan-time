@@ -30,13 +30,13 @@ class TimePassedWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 5),
-      padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         color: Themes.primary.withOpacity(.3),
         boxShadow: const [
           BoxShadow(
-            color: Colors.white30,
+            color: Colors.black12,
           ),
         ],
       ),
@@ -110,7 +110,7 @@ class TimeNextWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 5),
-      padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         color: Themes.primary.withOpacity(.3),
@@ -193,8 +193,13 @@ class TimeCurrentWidget extends StatelessWidget {
       children: [
         Expanded(
           child: Container(
-            margin: const EdgeInsets.only(top: 5, bottom: 5, left: 10),
-            padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+            margin: EdgeInsets.only(
+              top: 5,
+              bottom: 5,
+              left: Get.locale == const Locale('en') ? 0 : 10,
+              right: Get.locale == const Locale('en') ? 10 : 0,
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(10)),
               color: Themes.selected,
@@ -215,7 +220,7 @@ class TimeCurrentWidget extends StatelessWidget {
         ),
         Container(
           margin: const EdgeInsets.symmetric(vertical: 5),
-          padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(10)),
             color: Themes.selected,

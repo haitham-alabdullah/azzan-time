@@ -23,6 +23,8 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
         title ?? 'Azzan Time'.tr,
         style: Themes.textStyle.copyWith(fontWeight: FontWeight.w800),
       ),
+      elevation: 0,
+      scrolledUnderElevation: 0,
       leading: Container(
         width: 35,
         height: 35,

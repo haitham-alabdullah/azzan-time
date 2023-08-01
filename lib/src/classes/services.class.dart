@@ -67,7 +67,7 @@ class Services {
         //   Get.find<AuthProvider>().logout();
         // } else {
         // }
-        throw res['message'];
+        throw res['data'];
       }
     } catch (e) {
       if (e is FormatException) {

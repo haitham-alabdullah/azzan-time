@@ -46,9 +46,9 @@ class _ReminingTimeWidgetState extends State<ReminingTimeWidget>
 
   @override
   void dispose() {
+    controller.dispose();
     timer.cancel();
     super.dispose();
-    controller.dispose();
   }
 
   @override

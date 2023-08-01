@@ -1,50 +1,18 @@
+import 'package:azzan/src/providers/main.provider.dart';
 import 'package:get/get.dart';
 
 import '../classes/services.class.dart';
-import '../models/method.model.dart';
 import '../models/praytime.model.dart';
 
 class TimeProvider extends GetxController {
   final RxInt _current = RxInt(0);
   final Rx<List<PrayTime>> _times = Rx<List<PrayTime>>([]);
-  final Rx<Method> _method = Rx<Method>(
-    Method('4', 'Umm Al-Qura University, Makkah', ''),
-  );
-  final RxString _country = RxString('SA');
-  final RxString _city = RxString('Makkah');
 
   int get current => _current.value;
   List<PrayTime> get times => _times.value;
   PrayTime get currentTime => _times.value[current];
 
-  Method get method => _method.value;
-  String get city => _city.value;
-  String get country => _country.value;
-
-  List<Method> get allMethods => [
-        Method('1', 'University of Islamic Sciences, Karachi', ''),
-        Method('2', 'Islamic Society of North America', ''),
-        Method('3', 'Muslim World League', ''),
-        Method('4', 'Umm Al-Qura University, Makkah', ''),
-        Method('5', 'Egyptian General Authority of Survey', ''),
-        Method('7', 'Institute of Geophysics, University of Tehran', ''),
-        Method('8', 'Gulf Region', ''),
-        Method('9', 'Kuwait', ''),
-        Method('10', 'Qatar', ''),
-        Method('11', 'Majlis Ugama Islam Singapura, Singapore', ''),
-        Method('12', 'nion Organization islamic de France', ''),
-        Method('13', 'Diyanet İşleri Başkanlığı, Turkey', ''),
-        Method('14', 'Spiritual Administration of Muslims of Russia', ''),
-        Method(
-            '15',
-            'Moonsighting Committee Worldwide (also requires shafaq parameter)',
-            ''),
-      ];
-  List<String> get allCountries => ['SA', 'AE'];
-  List<String> get allCities => ['Makkah', 'Dubai'];
-
   set setTimes(value) => _times.value = value;
-  set setMethod(value) => _method.value = value;
 
   @override
   void onInit() {
@@ -53,7 +21,10 @@ class TimeProvider extends GetxController {
   }
 
   load() async {
-    await Services.getData('?country=$country&city=$city').then((value) {
+    final main = Get.find<MainProvider>();
+    final url =
+        '?country=${main.country.id}&city=${main.city.title.replaceAll(' ', '')}&method=${main.method.id}';
+    await Services.getData(url).then((value) {
       if (value == null) return;
       final timing = value['timings'] as Map<String, dynamic>;
       final List<PrayTime> times = [];
@@ -81,7 +52,7 @@ class TimeProvider extends GetxController {
   PrayTime? setCurrentTime() {
     final now = DateTime.now();
     for (var time in _times.value) {
-      if (now.isBefore(time.getDateTime())) {
+      if (now.isBefore(time.getDateTime(now))) {
         return time;
       }
     }
@@ -95,6 +66,11 @@ class TimeProvider extends GetxController {
 
   Duration getRemining() {
     final now = DateTime.now();
+    if (_current.value == 0 && now.hour > 6) {
+      return DateTime(now.year, now.month, now.day + 1, currentTime.hours(),
+              currentTime.minutes())
+          .difference(now);
+    }
     return DateTime(now.year, now.month, now.day, currentTime.hours(),
             currentTime.minutes())
         .difference(now);

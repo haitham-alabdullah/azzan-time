@@ -4,11 +4,13 @@ class AzzanTranslations extends Translations {
   @override
   Map<String, Map<String, String>> get keys => {
         'ar': {
+          'Arabic': 'العربية',
+          'Language': 'اللغة',
           'Azzan Time': 'وقت الأذان',
           'Fajr': 'الفجر',
-          'Dhuhr': 'الضهر',
+          'Dhuhr': 'الظهر',
           'Asr': 'العصر',
-          'Maghrib': 'المغري',
+          'Maghrib': 'المغرب',
           'Isha': 'العشاء',
           'Remining for ': 'متبقي لصلاة ',
           'Hour': 'ساعة',

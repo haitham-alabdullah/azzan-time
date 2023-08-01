@@ -1,7 +1,20 @@
 class Method {
   final String id;
-  final String en;
-  final String ar;
+  final String title;
 
-  Method(this.id, this.en, this.ar);
+  Method(this.id, this.title);
+
+  @override
+  bool operator ==(Object other) {
+    return (other is Method) && other.id == id;
+  }
+
+  @override
+  String toString() {
+    return '$id--$title';
+  }
+
+  factory Method.fromStore(String lang) {
+    return Method(lang.split('--')[0], lang.split('--')[1]);
+  }
 }
