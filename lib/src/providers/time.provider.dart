@@ -15,6 +15,7 @@ class TimeProvider extends GetxController {
 
   int get current => _current.value;
   List<PrayTime> get times => _times.value;
+  PrayTime get currentTime => _times.value[current];
 
   Method get method => _method.value;
   String get city => _city.value;
@@ -42,7 +43,6 @@ class TimeProvider extends GetxController {
   List<String> get allCountries => ['SA', 'AE'];
   List<String> get allCities => ['Makkah', 'Dubai'];
 
-  set setCurrent(value) => _current.value = value;
   set setTimes(value) => _times.value = value;
   set setMethod(value) => _method.value = value;
 
@@ -57,18 +57,73 @@ class TimeProvider extends GetxController {
       if (value == null) return;
       final timing = value['timings'] as Map<String, dynamic>;
       final List<PrayTime> times = [];
-      for (var i = 0; i < timing.length; i++) {
-        final time = PrayTime.fromJson(timing[i]);
-        times.add(time);
-      }
-      updateTime(times);
+      final List<String> keys = [
+        'Fajr',
+        'Dhuhr',
+        'Asr',
+        'Maghrib',
+        'Isha',
+      ];
+      timing.forEach((key, value) {
+        if (keys.contains(key)) {
+          times.add(PrayTime(keys.indexOf(key), key, value));
+        }
+      });
+      updateTimes(times);
     });
   }
 
-  updateTime(List<PrayTime> times) {
+  updateTimes(List<PrayTime> times) {
     _times.value = times;
     update();
   }
 
-  setCountry() {}
+  PrayTime? setCurrentTime() {
+    final now = DateTime.now();
+    for (var time in _times.value) {
+      if (now.isBefore(time.getDateTime())) {
+        return time;
+      }
+    }
+    return null;
+  }
+
+  updateCurrentTime() {
+    _current.value = setCurrentTime()?.id ?? 0;
+    update();
+  }
+
+  Duration getRemining() {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day, currentTime.hours(),
+            currentTime.minutes())
+        .difference(now);
+  }
+
+  lessThenTen() {
+    final remining = getRemining();
+    return remining.inMinutes < 10;
+  }
+
+  remining() {
+    final remining = getRemining();
+    final hrs = remining.inHours;
+
+    final min = remining.inMinutes > 59
+        ? (remining.inMinutes % 60)
+        : remining.inMinutes;
+
+    if (hrs == 0 && min < 2) {
+      return '${'Minute'.tr} ';
+    }
+
+    if (hrs == 0) {
+      return '$min ${min > 10 ? 'min'.tr : 'min2'.tr}';
+    }
+
+    if (hrs > 0 && min == 0) {
+      return '$hrs ${'Hour'.tr}';
+    }
+    return '$hrs ${'Hour'.tr} ${'and'.tr} $min ${min > 10 ? 'min'.tr : 'min2'.tr}';
+  }
 }

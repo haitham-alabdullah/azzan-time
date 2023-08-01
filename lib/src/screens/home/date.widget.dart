@@ -76,6 +76,7 @@ class DateWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.symmetric(vertical: 35),
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         color: Themes.primary.withOpacity(.3),
@@ -85,29 +86,26 @@ class DateWidget extends StatelessWidget {
           ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 35),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                getDay(local: 'ar'),
-                const SizedBox(height: 10),
-                getHDate(),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                getDay(local: 'en'),
-                const SizedBox(height: 10),
-                getMDate(),
-              ],
-            ),
-          ],
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              getDay(local: 'ar'),
+              const SizedBox(height: 10),
+              getHDate(),
+            ],
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              getDay(local: 'en'),
+              const SizedBox(height: 10),
+              getMDate(),
+            ],
+          ),
+        ],
       ),
     );
   }
