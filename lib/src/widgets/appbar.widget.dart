@@ -1,9 +1,11 @@
 import 'package:azzan/src/providers/main.provider.dart';
+import 'package:azzan/src/widgets/loading.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../classes/themes.class.dart';
+import '../providers/time.provider.dart';
 
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   const AppBarWidget({
@@ -25,6 +27,31 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
       ),
       elevation: 0,
       scrolledUnderElevation: 0,
+      actions: [
+        GetBuilder<TimeProvider>(builder: (provider) {
+          return Container(
+            width: 35,
+            height: 35,
+            margin: const EdgeInsets.all(10.5),
+            decoration: BoxDecoration(
+              color: Themes.bg,
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey[400]!,
+                  blurRadius: 2.0,
+                ),
+              ],
+            ),
+            child: provider.isLoading
+                ? const Padding(
+                    padding: EdgeInsets.all(10.5),
+                    child: Loading(),
+                  )
+                : Image.asset('assets/images/logo.png'),
+          );
+        }),
+      ],
       leading: Container(
         width: 35,
         height: 35,

@@ -5,14 +5,20 @@ import '../classes/services.class.dart';
 import '../models/praytime.model.dart';
 
 class TimeProvider extends GetxController {
+  final RxBool _isLoading = RxBool(false);
   final RxInt _current = RxInt(0);
   final Rx<List<PrayTime>> _times = Rx<List<PrayTime>>([]);
 
+  bool get isLoading => _isLoading.value;
   int get current => _current.value;
   List<PrayTime> get times => _times.value;
   PrayTime get currentTime => _times.value[current];
 
   set setTimes(value) => _times.value = value;
+  set setLoading(bool value) {
+    _isLoading.value = value;
+    update();
+  }
 
   @override
   void onInit() {
@@ -21,6 +27,7 @@ class TimeProvider extends GetxController {
   }
 
   load() async {
+    setLoading = true;
     final main = Get.find<MainProvider>();
     final url =
         '?country=${main.country.id}&city=${main.city.title.replaceAll(' ', '')}&method=${main.method.id}';
@@ -41,7 +48,10 @@ class TimeProvider extends GetxController {
         }
       });
       updateTimes(times);
+    }).catchError((e) {
+      setLoading = false;
     });
+    setLoading = false;
   }
 
   updateTimes(List<PrayTime> times) {

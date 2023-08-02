@@ -1,8 +1,8 @@
-import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../classes/themes.class.dart';
+import '../../packages/custom_dropdown.dart';
 
 class SelectMenu<T> extends StatefulWidget {
   const SelectMenu({
@@ -44,23 +44,40 @@ class _SelectMenuState<T> extends State<SelectMenu<T>> {
       child: Row(
         children: [
           SizedBox(
-            width: Get.width / 6,
-            child: Text(
-              '${widget.title.tr}: ',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Themes.textColor,
-                    fontFamily: 'Tajawal',
-                    fontWeight: FontWeight.w500,
-                  ),
+            width: Get.width / 5,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Get.locale == const Locale('en')
+                  ? Alignment.centerLeft
+                  : Alignment.centerRight,
+              child: Text(
+                '${widget.title.tr}:',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Themes.textColor,
+                      fontFamily: 'Tajawal',
+                      fontWeight: FontWeight.w500,
+                    ),
+              ),
             ),
           ),
-          const SizedBox(width: 20),
+          const SizedBox(width: 15),
           Expanded(
             child: CustomDropdown(
                 hintText: widget.title.tr,
                 excludeSelected: false,
                 fillColor: Themes.selected,
-                items: widget.list.map((e) => e.title.toString().tr).toList(),
+                items: widget.list.map((e) => e.title.toString()).toList(),
+                listItemBuilder: (context, result) {
+                  return Text(
+                    result.tr,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Tajawal',
+                      color: Themes.textColor,
+                    ),
+                  );
+                },
+                valueBuilder: (p0) => p0.tr,
                 controller: jobRoleCtrl,
                 selectedStyle: const TextStyle(
                   fontSize: 14,
@@ -68,9 +85,8 @@ class _SelectMenuState<T> extends State<SelectMenu<T>> {
                   color: Themes.textColor,
                 ),
                 onChanged: (c) {
-                  // onChange
                   for (var element in widget.list) {
-                    if (element.title.toString().tr == c) {
+                    if (element.title == c) {
                       widget.onChange(element);
                       break;
                     }

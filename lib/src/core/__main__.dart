@@ -44,10 +44,17 @@ class _MainScreenState extends State<MainScreen> {
                   child: child,
                 );
               },
+              layoutBuilder: (currentChild, previousChildren) {
+                if (currentChild != null &&
+                    currentChild.key == const ValueKey('settings')) {
+                  return Expanded(child: currentChild);
+                }
+                return currentChild ?? const SizedBox();
+              },
               duration: const Duration(milliseconds: 500),
               child: provider.isSettings
-                  ? const SettingsScreen()
-                  : const HomeScreen(),
+                  ? const SettingsScreen(key: ValueKey('settings'))
+                  : const HomeScreen(key: ValueKey('home')),
             );
           }),
         ),

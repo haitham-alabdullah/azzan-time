@@ -70,7 +70,15 @@ class _ReminingTimeWidgetState extends State<ReminingTimeWidget>
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Remining for '.tr + provider.currentTime.title.tr),
+              Text(
+                'Remining for '.tr + provider.currentTime.title.tr,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontFamily: 'Tajawal',
+                  color: Themes.textColor,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
               const SizedBox(width: 3),
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 100),
@@ -83,6 +91,12 @@ class _ReminingTimeWidgetState extends State<ReminingTimeWidget>
                 child: Text(
                   remining.toString(),
                   key: ValueKey(remining.toString()),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontFamily: 'Tajawal',
+                    color: Themes.textColor,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ],

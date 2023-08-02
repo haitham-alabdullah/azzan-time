@@ -2,7 +2,9 @@ import 'package:azzan/src/models/language.model.dart';
 import 'package:azzan/src/providers/main.provider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../classes/themes.class.dart';
 import '../../models/country.model.dart';
 import '../../models/method.model.dart';
 import 'select_menu.widget.dart';
@@ -15,6 +17,15 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  Future<void> _launchUrl(String url) async {
+    final uri = Uri.parse('https://twitter.com/$url');
+    try {
+      await launchUrl(uri);
+    } catch (e) {
+      //
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -26,18 +37,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: SingleChildScrollView(
           child: GetBuilder<MainProvider>(builder: (provider) {
             return Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                const SizedBox(height: 10),
-                // ElevatedButton(
-                //     onPressed: () {
-                //       print(Get.locale);
-                //       // if (Get.locale == const Locale('en')) {
-                //       //   Get.find<MainProvider>().toggleLang(const Locale('ar'));
-                //       // } else {
-                //       //   Get.find<MainProvider>().toggleLang(const Locale('en'));
-                //       // }
-                //     },
-                //     child: const Text('data')),
+                const SizedBox(height: 70),
                 SelectMenu<Language>(
                   title: 'Language',
                   def: provider.lang,
@@ -66,9 +68,63 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   list: provider.country.cities,
                   onChange: provider.toggleCity,
                 ),
-
-                const SizedBox(height: 10),
-                const SizedBox(height: 60),
+                const SizedBox(height: 30),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Designer: Abdullah Al-Qahtani'.tr,
+                        textAlign: TextAlign.start,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Tajawal',
+                          color: Themes.textColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () => _launchUrl('DevAbdullah7'),
+                        child: Text(
+                          '${'X'.tr}: DevAbdullah7',
+                          textAlign: TextAlign.start,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontFamily: 'Tajawal',
+                            color: Themes.textColor,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        'Developer: Haitham Al-Abdullah'.tr,
+                        textAlign: TextAlign.start,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Tajawal',
+                          color: Themes.textColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () => _launchUrl('HaithamDev_'),
+                        child: Text(
+                          '${'X'.tr}: HaithamDev_',
+                          textAlign: TextAlign.start,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontFamily: 'Tajawal',
+                            color: Themes.textColor,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 70),
               ],
             );
           }),

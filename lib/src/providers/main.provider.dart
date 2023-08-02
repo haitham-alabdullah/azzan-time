@@ -8,6 +8,7 @@ import '../models/method.model.dart';
 
 class MainProvider extends GetxController {
   final RxBool _isSettings = RxBool(false);
+
   final Rx<Language> _locale = Rx<Language>(
     Language('العربية', const Locale('ar')),
   );
@@ -42,22 +43,47 @@ class MainProvider extends GetxController {
         Language('English', const Locale('en'))
       ];
   List<Method> get allMethods => [
+        Method('4', 'Umm Al-Qura University, Makkah'),
+        Method('8', 'Gulf Region'),
+        Method('3', 'Muslim World League'),
+        Method('10', 'Qatar'),
+        Method('9', 'Kuwait'),
+        Method('5', 'Egyptian General Authority of Survey'),
         Method('1', 'University of Islamic Sciences, Karachi'),
         Method('2', 'Islamic Society of North America'),
-        Method('3', 'Muslim World League'),
-        Method('4', 'Umm Al-Qura University, Makkah'),
-        Method('5', 'Egyptian General Authority of Survey'),
         Method('7', 'Institute of Geophysics, University of Tehran'),
-        Method('8', 'Gulf Region'),
-        Method('9', 'Kuwait'),
-        Method('10', 'Qatar'),
         Method('11', 'Majlis Ugama Islam Singapura, Singapore'),
-        Method('12', 'nion Organization islamic de France'),
+        Method('12', 'Union Organization islamic de France'),
         Method('13', 'Diyanet İşleri Başkanlığı, Turkey'),
         Method('14', 'Spiritual Administration of Muslims of Russia'),
       ];
 
   List<Country> allCountries = [
+    Country(
+      'SA',
+      'Saudi Arabia',
+      [
+        City('Riyadh'),
+        City('Jeddah'),
+        City('Makka'),
+        City('Medina'),
+        City('Dammam'),
+        City('Khobar'),
+        City('Taif'),
+      ],
+    ),
+    Country(
+      'AE',
+      'United Arab Emirates',
+      [
+        City('Abu Dhabi'),
+        City('Dubai'),
+        City('Sharjah'),
+        City('Ajman'),
+        City('Fujairah'),
+        City('Ras Al Khaimah'),
+      ],
+    ),
     Country(
       'BH',
       'Bahrain',
@@ -100,31 +126,6 @@ class MainProvider extends GetxController {
         City('Sohar'),
         City('Nizwa'),
         City('Sur'),
-      ],
-    ),
-    Country(
-      'AE',
-      'United Arab Emirates',
-      [
-        City('Abu Dhabi'),
-        City('Dubai'),
-        City('Sharjah'),
-        City('Ajman'),
-        City('Fujairah'),
-        City('Ras Al Khaimah'),
-      ],
-    ),
-    Country(
-      'SA',
-      'Saudi Arabia',
-      [
-        City('Riyadh'),
-        City('Jeddah'),
-        City('Makka'),
-        City('Medina'),
-        City('Dammam'),
-        City('Khobar'),
-        City('Taif'),
       ],
     ),
   ];

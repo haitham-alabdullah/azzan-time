@@ -5,6 +5,8 @@ class Loading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const CircularProgressIndicator.adaptive();
+    return const CircularProgressIndicator.adaptive(
+      strokeWidth: 2,
+    );
   }
 }

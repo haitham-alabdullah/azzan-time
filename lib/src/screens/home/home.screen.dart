@@ -22,7 +22,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    Get.find<TimeProvider>().load();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Get.find<TimeProvider>().load();
+    });
     timer = Timer.periodic(
       const Duration(seconds: 1),
       (Timer t) => Get.find<TimeProvider>().updateCurrentTime(),
