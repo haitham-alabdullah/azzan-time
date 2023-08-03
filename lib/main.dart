@@ -35,6 +35,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     final provider = Get.find<MainProvider>();
     return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Azzan-Timing',
       theme: Themes.themeData,
       locale: provider.locale,
