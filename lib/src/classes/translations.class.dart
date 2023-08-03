@@ -80,7 +80,6 @@ class AzzanTranslations extends Translations {
           'City': 'المدينة',
           'Designer: Abdullah Al-Qahtani': 'المصمم: عبدالله القحطاني',
           'Developer: Haitham Al-Abdullah': 'المطور: هيثم العبدالله',
-          'X': 'تويتر',
         },
         'en': {
           'min': 'Minutes',

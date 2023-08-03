@@ -54,6 +54,8 @@ class _ReminingTimeWidgetState extends State<ReminingTimeWidget>
   @override
   Widget build(BuildContext context) {
     return GetBuilder<TimeProvider>(builder: (provider) {
+      final timing = provider.currentTime();
+      if (timing == null) return const SizedBox();
       final remining = provider.remining();
       return FadeTransition(
         opacity: Tween<double>(begin: 1.0, end: 0.0).animate(controller),
@@ -71,7 +73,7 @@ class _ReminingTimeWidgetState extends State<ReminingTimeWidget>
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Remining for '.tr + provider.currentTime.title.tr,
+                'Remining for '.tr + timing.title.tr,
                 style: const TextStyle(
                   fontSize: 14,
                   fontFamily: 'Tajawal',

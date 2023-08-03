@@ -8,6 +8,7 @@ import '../models/method.model.dart';
 
 class MainProvider extends GetxController {
   final RxBool _isSettings = RxBool(false);
+  final RxBool _isFirstTime = RxBool(false);
 
   final Rx<Language> _locale = Rx<Language>(
     Language('العربية', const Locale('ar')),
@@ -32,6 +33,7 @@ class MainProvider extends GetxController {
   final Rx<City> _city = Rx<City>(City('Makka'));
 
   bool get isSettings => _isSettings.value;
+  bool get isFirstTime => _isFirstTime.value;
   Locale get locale => _locale.value.locale;
   Language get lang => _locale.value;
   Method get method => _method.value;
@@ -180,6 +182,17 @@ class MainProvider extends GetxController {
   storeCity(city) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('city', city.toString());
+  }
+
+  Future<void> getFirstTime() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    _isFirstTime.value = prefs.getBool('FirstTime') ?? true;
+    if (_isFirstTime.value) {
+      prefs.setBool('FirstTime', false);
+      _isFirstTime.value = false;
+      _isSettings.value = true;
+    }
+    update();
   }
 
   void getLanguage() async {

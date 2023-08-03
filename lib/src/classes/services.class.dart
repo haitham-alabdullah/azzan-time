@@ -95,9 +95,10 @@ class Services {
   }
 
   static registerProviders() async {
-    Get.lazyPut(() => MainProvider());
-    final timeProvider = Get.put(TimeProvider());
-    await timeProvider.load();
+    final main = Get.put(MainProvider());
+    await main.getFirstTime();
+    Get.put(TimeProvider());
+    // await timeProvider.load();
   }
 
   static toArNumber(String string) {

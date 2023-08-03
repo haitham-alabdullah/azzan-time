@@ -12,7 +12,11 @@ class TimeProvider extends GetxController {
   bool get isLoading => _isLoading.value;
   int get current => _current.value;
   List<PrayTime> get times => _times.value;
-  PrayTime get currentTime => _times.value[current];
+  PrayTime? currentTime() {
+    if (_times.value.isEmpty) return null;
+    PrayTime currentTime = _times.value[current];
+    return currentTime;
+  }
 
   set setTimes(value) => _times.value = value;
   set setLoading(bool value) {
@@ -76,13 +80,15 @@ class TimeProvider extends GetxController {
 
   Duration getRemining() {
     final now = DateTime.now();
+    final timing = currentTime();
+    if (timing == null) return Duration.zero;
     if (_current.value == 0 && now.hour > 6) {
-      return DateTime(now.year, now.month, now.day + 1, currentTime.hours(),
-              currentTime.minutes())
+      return DateTime(now.year, now.month, now.day + 1, timing.hours(),
+              timing.minutes())
           .difference(now);
     }
-    return DateTime(now.year, now.month, now.day, currentTime.hours(),
-            currentTime.minutes())
+    return DateTime(
+            now.year, now.month, now.day, timing.hours(), timing.minutes())
         .difference(now);
   }
 

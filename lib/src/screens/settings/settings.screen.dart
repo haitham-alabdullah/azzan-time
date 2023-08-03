@@ -86,10 +86,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       InkWell(
                         onTap: () => _launchUrl('DevAbdullah7'),
-                        child: Text(
-                          '${'X'.tr}: DevAbdullah7',
+                        child: const Text(
+                          '@DevAbdullah7',
                           textAlign: TextAlign.start,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
                             fontFamily: 'Tajawal',
                             color: Themes.textColor,
@@ -110,10 +110,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       InkWell(
                         onTap: () => _launchUrl('HaithamDev_'),
-                        child: Text(
-                          '${'X'.tr}: HaithamDev_',
+                        child: const Text(
+                          '@HaithamDev_',
                           textAlign: TextAlign.start,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
                             fontFamily: 'Tajawal',
                             color: Themes.textColor,

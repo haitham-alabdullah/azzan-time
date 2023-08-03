@@ -13,6 +13,7 @@ dependencies:
 
   #ui
   url_launcher: ^6.1.12
+  flutter_native_splash: ^2.3.1
 
   #logic
   get: ^4.6.5
