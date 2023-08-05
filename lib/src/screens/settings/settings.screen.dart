@@ -2,11 +2,11 @@ import 'package:azzan/src/models/language.model.dart';
 import 'package:azzan/src/providers/main.provider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-import '../../classes/themes.class.dart';
 import '../../models/country.model.dart';
 import '../../models/method.model.dart';
+import '../home/note.widget.dart';
+import 'dev_card.widget.dart';
 import 'select_menu.widget.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -17,15 +17,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  Future<void> _launchUrl(String url) async {
-    final uri = Uri.parse('https://twitter.com/$url');
-    try {
-      await launchUrl(uri);
-    } catch (e) {
-      //
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -39,7 +30,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const SizedBox(height: 70),
+                const SizedBox(height: 10),
                 SelectMenu<Language>(
                   title: 'Language',
                   def: provider.lang,
@@ -69,62 +60,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   onChange: provider.toggleCity,
                 ),
                 const SizedBox(height: 30),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Designer: Abdullah Al-Qahtani'.tr,
-                        textAlign: TextAlign.start,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Tajawal',
-                          color: Themes.textColor,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => _launchUrl('DevAbdullah7'),
-                        child: const Text(
-                          '@DevAbdullah7',
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontFamily: 'Tajawal',
-                            color: Themes.textColor,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        'Developer: Haitham Al-Abdullah'.tr,
-                        textAlign: TextAlign.start,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Tajawal',
-                          color: Themes.textColor,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => _launchUrl('HaithamDev_'),
-                        child: const Text(
-                          '@HaithamDev_',
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontFamily: 'Tajawal',
-                            color: Themes.textColor,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 70),
+                const NoteWidget(),
+                const SizedBox(height: 40),
+                const DevCard(),
               ],
             );
           }),

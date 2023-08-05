@@ -116,7 +116,7 @@ class TimeNextWidget extends StatelessWidget {
         color: Themes.primary.withOpacity(.3),
         boxShadow: const [
           BoxShadow(
-            color: Colors.white60,
+            color: Color.fromARGB(214, 255, 255, 255),
           ),
         ],
       ),

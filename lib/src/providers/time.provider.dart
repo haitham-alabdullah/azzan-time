@@ -41,6 +41,7 @@ class TimeProvider extends GetxController {
       final List<PrayTime> times = [];
       final List<String> keys = [
         'Fajr',
+        'Sunrise',
         'Dhuhr',
         'Asr',
         'Maghrib',
