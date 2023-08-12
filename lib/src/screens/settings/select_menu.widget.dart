@@ -10,6 +10,7 @@ class SelectMenu<T> extends StatefulWidget {
     required this.def,
     required this.list,
     required this.onChange,
+    this.withSrearch = false,
     super.key,
   }) : assert(def is T && list is List<T>);
 
@@ -17,6 +18,7 @@ class SelectMenu<T> extends StatefulWidget {
   final dynamic def;
   final List<dynamic> list;
   final void Function(T) onChange;
+  final bool withSrearch;
 
   @override
   State<SelectMenu> createState() => _SelectMenuState<T>();
@@ -62,36 +64,67 @@ class _SelectMenuState<T> extends State<SelectMenu<T>> {
           ),
           const SizedBox(width: 15),
           Expanded(
-            child: CustomDropdown(
-                hintText: widget.title.tr,
-                excludeSelected: false,
-                fillColor: Themes.selected,
-                items: widget.list.map((e) => e.title.toString()).toList(),
-                listItemBuilder: (context, result) {
-                  return Text(
-                    result.tr,
-                    style: const TextStyle(
+            child: widget.withSrearch
+                ? CustomDropdown.search(
+                    hintText: widget.title.tr,
+                    excludeSelected: false,
+                    fillColor: Themes.selected,
+                    items: widget.list.map((e) => e.title.toString()).toList(),
+                    listItemBuilder: (context, result) {
+                      return Text(
+                        result.tr,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Tajawal',
+                          color: Themes.textColor,
+                        ),
+                      );
+                    },
+                    valueBuilder: (p0) => p0.tr,
+                    controller: jobRoleCtrl,
+                    selectedStyle: const TextStyle(
                       fontSize: 14,
                       fontFamily: 'Tajawal',
                       color: Themes.textColor,
                     ),
-                  );
-                },
-                valueBuilder: (p0) => p0.tr,
-                controller: jobRoleCtrl,
-                selectedStyle: const TextStyle(
-                  fontSize: 14,
-                  fontFamily: 'Tajawal',
-                  color: Themes.textColor,
-                ),
-                onChanged: (c) {
-                  for (var element in widget.list) {
-                    if (element.title == c) {
-                      widget.onChange(element);
-                      break;
-                    }
-                  }
-                }),
+                    onChanged: (c) {
+                      for (var element in widget.list) {
+                        if (element.title == c) {
+                          widget.onChange(element);
+                          break;
+                        }
+                      }
+                    })
+                : CustomDropdown(
+                    hintText: widget.title.tr,
+                    excludeSelected: false,
+                    fillColor: Themes.selected,
+                    items: widget.list.map((e) => e.title.toString()).toList(),
+                    listItemBuilder: (context, result) {
+                      return Text(
+                        result.tr,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Tajawal',
+                          color: Themes.textColor,
+                        ),
+                      );
+                    },
+                    valueBuilder: (p0) => p0.tr,
+                    controller: jobRoleCtrl,
+                    selectedStyle: const TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Tajawal',
+                      color: Themes.textColor,
+                    ),
+                    onChanged: (c) {
+                      for (var element in widget.list) {
+                        if (element.title == c) {
+                          widget.onChange(element);
+                          break;
+                        }
+                      }
+                    }),
           ),
         ],
       ),

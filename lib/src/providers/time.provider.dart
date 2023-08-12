@@ -34,7 +34,7 @@ class TimeProvider extends GetxController {
     setLoading = true;
     final main = Get.find<MainProvider>();
     final url =
-        '?country=${main.country.id}&city=${main.city.title.replaceAll(' ', '')}&method=${main.method.id}';
+        'http://api.aladhan.com/v1/timingsByCity?country=${main.country.id}&city=${main.city.title.replaceAll(' ', '')}&method=${main.method.id}';
     await Services.getData(url).then((value) {
       if (value == null) return;
       final timing = value['timings'] as Map<String, dynamic>;
@@ -55,6 +55,7 @@ class TimeProvider extends GetxController {
       updateTimes(times);
     }).catchError((e) {
       setLoading = false;
+      throw e;
     });
     setLoading = false;
   }

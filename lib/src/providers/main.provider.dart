@@ -2,11 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../classes/services.class.dart';
+import '../data/countries.dart' as local_data;
 import '../models/country.model.dart';
 import '../models/language.model.dart';
 import '../models/method.model.dart';
 
+extension StringExtension on String {
+  String removeList(List<String> wordsToRemove) {
+    String result = this;
+
+    for (String word in wordsToRemove) {
+      result = result.replaceAll(word, '');
+    }
+
+    return result;
+  }
+}
+
 class MainProvider extends GetxController {
+  final RxBool _isLoading = RxBool(false);
   final RxBool _isSettings = RxBool(false);
   final RxBool _isFirstTime = RxBool(false);
 
@@ -19,19 +34,14 @@ class MainProvider extends GetxController {
   final Rx<Country> _country = Rx<Country>(Country(
     'SA',
     'Saudi Arabia',
-    [
-      City('Makka'),
-      City('Riyadh'),
-      City('Jeddah'),
-      City('Medina'),
-      City('Dammam'),
-      City('Khobar'),
-      City('Taif'),
-    ],
   ));
+  final Rx<List<City>> _cities = Rx<List<City>>([
+    City('Makka'),
+  ]);
 
   final Rx<City> _city = Rx<City>(City('Makka'));
 
+  bool get isLoading => _isLoading.value;
   bool get isSettings => _isSettings.value;
   bool get isFirstTime => _isFirstTime.value;
   Locale get locale => _locale.value.locale;
@@ -60,77 +70,8 @@ class MainProvider extends GetxController {
         Method('14', 'Spiritual Administration of Muslims of Russia'),
       ];
 
-  List<Country> allCountries = [
-    Country(
-      'SA',
-      'Saudi Arabia',
-      [
-        City('Riyadh'),
-        City('Jeddah'),
-        City('Makka'),
-        City('Medina'),
-        City('Dammam'),
-        City('Khobar'),
-        City('Taif'),
-      ],
-    ),
-    Country(
-      'AE',
-      'United Arab Emirates',
-      [
-        City('Abu Dhabi'),
-        City('Dubai'),
-        City('Sharjah'),
-        City('Ajman'),
-        City('Fujairah'),
-        City('Ras Al Khaimah'),
-      ],
-    ),
-    Country(
-      'BH',
-      'Bahrain',
-      [
-        City('Manama'),
-        City('Muharraq'),
-        City('Riffa'),
-        City('Isa Town'),
-        City('Jidhafs'),
-      ],
-    ),
-    Country(
-      'KW',
-      'Kuwait',
-      [
-        City('Kuwait'),
-        City('Al Ahmadi'),
-        City('Hawalli'),
-        City('Farwaniya'),
-        City('Mubarak Al-Kabeer'),
-      ],
-    ),
-    Country(
-      'QA',
-      'Qatar',
-      [
-        City('Doha'),
-        City('Al Wakrah'),
-        City('Al Rayyan'),
-        City('Umm Salal'),
-        City('Al Khor'),
-      ],
-    ),
-    Country(
-      'OM',
-      'Oman',
-      [
-        City('Muscat'),
-        City('Salalah'),
-        City('Sohar'),
-        City('Nizwa'),
-        City('Sur'),
-      ],
-    ),
-  ];
+  List<Country> allCountries = local_data.countries;
+  List<City> get allCities => _cities.value;
 
   toggleSettings() {
     _isSettings.value = !_isSettings.value;
@@ -150,11 +91,44 @@ class MainProvider extends GetxController {
     storeMethod(method);
   }
 
-  void toggleCountry(Country country) {
-    _city.value = country.cities.first;
+  void toggleCountry(Country country) async {
+    _isLoading.value = true;
     _country.value = country;
     update();
-    storeCity(country.cities.first);
+    final params = 'iso2=${_country.value.id}';
+    final cities = await Services.getData(
+      'https://countriesnow.space/api/v0.1/countries/states/q?$params',
+    ).then<List<City>>((value) {
+      final List<City> list = [];
+      if (value != null) {
+        final c = value['states'];
+        final extraWords = [
+          'Region',
+          'Emirate',
+          'Governorate',
+          'Municipality',
+          'District',
+          'Province',
+          'Border',
+          'Borders',
+        ];
+
+        for (var city in c) {
+          list.add(City(city['name']
+              .toString()
+              .removeList(extraWords)
+              .replaceAll('Al ', 'Al-')
+              .trim()));
+        }
+        return list;
+      }
+      return [];
+    });
+    _cities.value = cities;
+    _city.value = cities.first;
+    _isLoading.value = false;
+    update();
+    storeCity(cities.first);
     storeCountry(country);
   }
 
@@ -166,22 +140,30 @@ class MainProvider extends GetxController {
 
   storeLanguage(locale) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('language', locale.toString());
+    await prefs
+        .setString('language', locale.toString())
+        .then((value) => print('language stored: $value'));
   }
 
   storeMethod(method) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('method', method.toString());
+    await prefs
+        .setString('method', method.toString())
+        .then((value) => print('method stored: $value'));
   }
 
   storeCountry(country) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('country', country.toString());
+    await prefs
+        .setString('country', country.toString())
+        .then((value) => print('country stored: $value'));
   }
 
   storeCity(city) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('city', city.toString());
+    await prefs
+        .setString('city', city.toString())
+        .then((value) => print('city stored: $value'));
   }
 
   Future<void> getFirstTime() async {
@@ -195,53 +177,76 @@ class MainProvider extends GetxController {
     update();
   }
 
-  void getLanguage() async {
+  Future<void> getLanguage() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     _locale.value =
         Language.fromStore(prefs.getString('language') ?? 'العربية-ar');
     Get.updateLocale(_locale.value.locale);
-    update();
   }
 
-  void getMethod() async {
+  Future<void> getMethod() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     _method.value = Method.fromStore(
         prefs.getString('method') ?? '4--Umm Al-Qura University, Makkah');
-    update();
   }
 
-  void getCountry() async {
+  Future<void> getCountry() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    _country.value = Country.fromStore(prefs.getString('country') ??
-        Country(
-          'SA',
-          'Saudi Arabia',
-          [
-            City('Makka'),
-            City('Riyadh'),
-            City('Jeddah'),
-            City('Medina'),
-            City('Dammam'),
-            City('Khobar'),
-            City('Taif'),
-          ],
-        ).toString());
+    _country.value = Country.fromStore(
+        prefs.getString('country') ?? Country('SA', 'Saudi Arabia').toString());
+    _isLoading.value = true;
+    _country.value = country;
+    update();
+    final params = 'iso2=${_country.value.id}';
+    _cities.value = await Services.getData(
+      'https://countriesnow.space/api/v0.1/countries/states/q?$params',
+    ).then<List<City>>((value) {
+      final List<City> list = [];
+      if (value != null) {
+        final c = value['states'];
+        final extraWords = [
+          'Region',
+          'Emirate',
+          'Governorate',
+          'Municipality',
+          'District',
+          'Province',
+          'Border',
+          'Borders',
+        ];
+
+        for (var city in c) {
+          list.add(City(city['name']
+              .toString()
+              .removeList(extraWords)
+              .replaceAll('Al ', 'Al-')
+              .trim()));
+        }
+        return list;
+      }
+      return [];
+    });
+    _isLoading.value = false;
     update();
   }
 
-  void getCity() async {
+  Future<void> getCity() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     _city.value =
         City.fromStore(prefs.getString('city') ?? City('Makka').toString());
-    update();
   }
 
   @override
-  void onInit() {
-    getLanguage();
-    getMethod();
-    getCountry();
-    getCity();
+  void onInit() async {
+    await load();
     super.onInit();
+  }
+
+  Future<void> load() async {
+    await getLanguage();
+    await getMethod();
+    await getCountry();
+    await getCity();
+    update();
   }
 }

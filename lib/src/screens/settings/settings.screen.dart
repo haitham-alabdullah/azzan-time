@@ -1,5 +1,6 @@
 import 'package:azzan/src/models/language.model.dart';
 import 'package:azzan/src/providers/main.provider.dart';
+import 'package:azzan/src/widgets/loading.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -25,9 +26,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           vertical: 20,
           horizontal: 16,
         ),
-        child: SingleChildScrollView(
-          child: GetBuilder<MainProvider>(builder: (provider) {
-            return Column(
+        child: GetBuilder<MainProvider>(builder: (provider) {
+          return SingleChildScrollView(
+            child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 const SizedBox(height: 10),
@@ -46,27 +47,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(height: 10),
                 SelectMenu<Country>(
+                  withSrearch: true,
                   title: 'Country',
                   def: provider.country,
                   list: provider.allCountries,
                   onChange: provider.toggleCountry,
                 ),
                 const SizedBox(height: 10),
-                SelectMenu<City>(
-                  key: ValueKey(provider.country),
-                  title: 'City',
-                  def: provider.city,
-                  list: provider.country.cities,
-                  onChange: provider.toggleCity,
-                ),
+                provider.isLoading
+                    ? const Center(child: Loading())
+                    : SelectMenu<City>(
+                        key: ValueKey(provider.country),
+                        withSrearch: true,
+                        title: 'City',
+                        def: provider.city,
+                        list: provider.allCities,
+                        onChange: provider.toggleCity,
+                      ),
                 const SizedBox(height: 30),
                 const NoteWidget(),
                 const SizedBox(height: 40),
                 const DevCard(),
               ],
-            );
-          }),
-        ),
+            ),
+          );
+        }),
       ),
     );
   }

@@ -73,6 +73,50 @@ class DateWidget extends StatelessWidget {
     );
   }
 
+  getMonth({String local = 'en'}) {
+    int month =
+        local == 'en' ? DateTime.now().month : HijriCalendar.now().hMonth;
+    final ar = [
+      '',
+      'محرم',
+      'صفر',
+      'ربيع الأول',
+      'ربيع الآخر',
+      'جمادى الأولى',
+      'جمادى الآخرة',
+      'رجب',
+      'شعبان',
+      'رمضان',
+      'شوال',
+      'ذو القعدة',
+      'ذو الحجة',
+    ];
+    final en = [
+      '',
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    return Text(
+      local == 'en' ? en[month] : ar[month],
+      style: const TextStyle(
+        fontFamily: 'Tajawal',
+        fontSize: 22,
+        fontWeight: FontWeight.w500,
+        color: Themes.textColor,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -95,6 +139,8 @@ class DateWidget extends StatelessWidget {
               getDay(local: 'ar'),
               const SizedBox(height: 10),
               getHDate(),
+              const SizedBox(height: 10),
+              getMonth(local: 'ar'),
             ],
           ),
           Column(
@@ -103,6 +149,8 @@ class DateWidget extends StatelessWidget {
               getDay(local: 'en'),
               const SizedBox(height: 10),
               getMDate(),
+              const SizedBox(height: 10),
+              getMonth(local: 'en'),
             ],
           ),
         ],

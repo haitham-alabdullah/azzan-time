@@ -2,15 +2,12 @@
 
 import 'dart:convert';
 
-import 'package:azzan/src/providers/main.provider.dart';
-import 'package:get/get.dart';
-
 class Country {
   final String id;
   final String title;
-  final List<City> cities;
+  // final List<City> cities;
 
-  Country(this.id, this.title, this.cities);
+  Country(this.id, this.title);
 
   @override
   bool operator ==(Object other) {
@@ -28,13 +25,14 @@ class Country {
   factory Country.fromStore(String lang) {
     final values = jsonDecode(lang);
     return Country(
-        values['id'],
-        values['title'],
-        Get.find<MainProvider>()
-                .allCountries
-                .firstWhereOrNull((element) => element.id == values['id'])
-                ?.cities ??
-            []);
+      values['id'],
+      values['title'],
+      // Get.find<MainProvider>()
+      //         .allCountries
+      //         .firstWhereOrNull((element) => element.id == values['id'])
+      //         ?.cities ??
+      //     []
+    );
   }
 }
 

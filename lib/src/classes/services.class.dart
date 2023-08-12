@@ -1,32 +1,31 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 
 import '../providers/main.provider.dart';
 import '../providers/time.provider.dart';
 
 class Services {
-  static const String name = 'Fanajeen';
-  static const String version = '1.0.0';
-  static const String apiKey = '';
-  static const String baseUrl = 'https://.ae/';
-  static const String baseAppUrl = 'http://api.aladhan.com/v1/timingsByCity';
-
-  static Future<dynamic> getData(String url,
-      {bool isApiKey = false, bool global = false}) async {
+  static Future<dynamic> getData(String url) async {
     // final status = await isNotConnected();
     // if (status) return;
-    final uri = Uri.parse((global ? baseUrl : baseAppUrl) + url);
-    return await http
-        .get(uri, headers: _headers(isApiKey: isApiKey))
+    final dio = Dio();
+    return await dio
+        .get(
+          url,
+          options: Options(
+            contentType: Headers.jsonContentType,
+            responseType: ResponseType.json,
+          ),
+        )
         .timeout(
           const Duration(seconds: 15),
           onTimeout: () => throw 'CONNECTION_TIMED_OUT'.tr,
         )
         .then((response) {
-      return filterResponse(response.body);
+      return filterResponse(response.data);
     }).catchError((error) {
       if (error is SocketException) {
         throw 'NO_INTERNET'.tr;
@@ -35,20 +34,25 @@ class Services {
     });
   }
 
-  static Future<dynamic> postData(String url, dynamic body,
-      {bool isApiKey = false}) async {
+  static Future<dynamic> postData(String url, dynamic body) async {
     // final status = await isNotConnected();
     // if (status) return;
-    final uri = Uri.parse(baseAppUrl + url);
-    return await http
-        .post(uri,
-            headers: _headers(isApiKey: isApiKey), body: jsonEncode(body))
+    final dio = Dio();
+    return await dio
+        .post(
+          url,
+          options: Options(
+            contentType: Headers.jsonContentType,
+            responseType: ResponseType.json,
+          ),
+          data: jsonEncode(body),
+        )
         .timeout(
           const Duration(seconds: 15),
           onTimeout: () => throw 'CONNECTION_TIMED_OUT'.tr,
         )
         .then((response) {
-      return filterResponse(response.body);
+      return filterResponse(response.data);
     }).catchError((error) {
       if (error is SocketException) {
         throw 'NO_INTERNET'.tr;
@@ -57,17 +61,17 @@ class Services {
     });
   }
 
-  static filterResponse(String body) {
+  static filterResponse(body) {
     try {
-      final res = jsonDecode(body);
-      if (res != null && res['code'] == 200) {
-        return res['data'];
+      // final res = jsonDecode(body);
+      if (body != null) {
+        return body['data'];
       } else {
         // if (res['message'] == 'INVALID_TOKEN') {
         //   Get.find<AuthProvider>().logout();
         // } else {
         // }
-        throw res['data'];
+        throw body['data'];
       }
     } catch (e) {
       if (e is FormatException) {
@@ -77,26 +81,10 @@ class Services {
     }
   }
 
-  // static String? _getToken() {
-  //   // try {
-  //   //   return Get.find<AuthProvider>().token;
-  //   // } catch (e) {
-  //   // }
-  //   return null;
-  // }
-
-  static Map<String, String> _headers({bool isApiKey = false}) {
-    // final token = _getToken() ?? apiKey;
-    return {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      // 'Authorization': 'Bearer ${isApiKey ? apiKey : token}',
-    };
-  }
-
   static registerProviders() async {
     final main = Get.put(MainProvider());
     await main.getFirstTime();
+    await main.load();
     Get.put(TimeProvider());
     // await timeProvider.load();
   }
@@ -125,5 +113,15 @@ class Services {
       result.write(replacement);
     }
     return result.toString();
+  }
+
+  String removeWords(String input, List<String> wordsToRemove) {
+    String result = input;
+
+    for (String word in wordsToRemove) {
+      result = result.replaceAll(word, '');
+    }
+
+    return result;
   }
 }
