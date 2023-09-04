@@ -82,7 +82,8 @@ class Services {
   }
 
   static registerProviders() async {
-    Get.put(MainProvider());
+    final main = Get.put(MainProvider());
+    main.getLocationPermission();
     Get.put(TimeProvider());
   }
 

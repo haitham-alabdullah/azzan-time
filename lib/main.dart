@@ -27,7 +27,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      Get.find<MainProvider>().getLocation().then((value) {
+      Get.find<MainProvider>().getLocation().then((value) async {
         if (value != null) Get.find<TimeProvider>().load();
       });
     }
@@ -44,7 +44,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback(
-      (_) => FlutterNativeSplash.remove(),
+      (_) {
+        FlutterNativeSplash.remove();
+        Get.find<MainProvider>().getLocation().then((value) {
+          if (value != null) Get.find<TimeProvider>().load();
+        });
+      },
     );
   }
 

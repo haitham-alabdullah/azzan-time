@@ -36,10 +36,13 @@ class TimeProvider extends GetxController {
   load() async {
     setLoading = true;
     final main = Get.find<MainProvider>();
-    final latitude = main.location?.latitude ?? '0.0';
-    final longitude = main.location?.longitude ?? '0.0';
+    final latitude = main.location.latitude;
+    final longitude = main.location.longitude;
     final method = main.method.id;
-    if (latitude == '0.0' || longitude == '0.0') return;
+    if (latitude == 0.0 || longitude == 0.0) {
+      setLoading = false;
+    }
+
     final data =
         '${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year}';
     final params = '?latitude=$latitude&longitude=$longitude&method=$method';
@@ -76,7 +79,6 @@ class TimeProvider extends GetxController {
       updateTimes(times);
     }).catchError((e) {
       setLoading = false;
-      // throw e;
     });
     setLoading = false;
   }

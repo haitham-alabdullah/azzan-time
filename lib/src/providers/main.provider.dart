@@ -17,14 +17,20 @@ class MainProvider extends GetxController {
     Method('4', 'Umm Al-Qura University, Makkah'),
   );
 
-  final Rx<LocationData?> _location = Rx<LocationData?>(null);
+  final Rx<LocationData> _location =
+      Rx<LocationData>(LocationData.fromMap(<String, dynamic>{
+    "latitude": 0.0,
+    "longitude": 0.0,
+  }));
 
   bool get isLoading => _isLoading.value;
   bool get isSettings => _isSettings.value;
   Locale get locale => _locale.value.locale;
   Language get lang => _locale.value;
   Method get method => _method.value;
-  LocationData? get location => _location.value;
+  LocationData get location => _location.value;
+  bool get hasLocation =>
+      _location.value.latitude != 0.0 && _location.value.longitude != 0.0;
 
   List<Language> get languages => [
         Language('العربية', const Locale('ar')),
@@ -110,7 +116,7 @@ class MainProvider extends GetxController {
     }
   }
 
-  Future<LocationData?> getLocation() async {
+  getLocationPermission() async {
     Location location = Location();
 
     bool serviceEnabled;
@@ -120,7 +126,7 @@ class MainProvider extends GetxController {
     if (!serviceEnabled) {
       serviceEnabled = await location.requestService();
       if (!serviceEnabled) {
-        return null;
+        return false;
       }
     }
 
@@ -128,13 +134,17 @@ class MainProvider extends GetxController {
     if (permissionGranted == PermissionStatus.denied) {
       permissionGranted = await location.requestPermission();
       if (permissionGranted != PermissionStatus.granted) {
-        return null;
+        return false;
       }
     }
 
+    return true;
+  }
+
+  Future<LocationData?> getLocation() async {
+    Location location = Location();
     final locationData = await location.getLocation();
     Get.find<MainProvider>().toggleLocation(locationData);
-
     return locationData;
   }
 
