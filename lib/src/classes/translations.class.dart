@@ -47,13 +47,17 @@ class AzzanTranslations extends Translations {
           'Developer: Haitham Al-Abdullah': 'المطور: هيثم العبدالله',
           'Important Note': 'ملاحظة مهمة',
           'pray_note':
-              'قد تكون مواقيت الصلاة المعروضة في التطبيق غير دقيقة. يجب التذكير بأن الهدف من هذا التطبيق هو تقديم تنبيه للصلاة وليس للاعتماد الكلي عليه لتحديد أوقات الصلاة. يجب على المسلمين الاعتماد على أنفسهم في تحديد أوقات الصلاة، بالاستناد إلى العلامات المحددة من قبل رسول الله صلى الله عليه وسلم، والاعتماد على سماع نداء المؤذن في المدينة.'
+              'قد تكون مواقيت الصلاة المعروضة في التطبيق غير دقيقة. يجب التذكير بأن الهدف من هذا التطبيق هو تقديم تنبيه للصلاة وليس للاعتماد الكلي عليه لتحديد أوقات الصلاة. يجب على المسلمين الاعتماد على أنفسهم في تحديد أوقات الصلاة، بالاستناد إلى العلامات المحددة من قبل رسول الله صلى الله عليه وسلم، والاعتماد على سماع نداء المؤذن في المدينة.',
+          'accessMessage':
+              "وقت الأذان يحتاج إلى الوصول إلى موقعك لتوفير أوقات الصلاة الدقيقة استنادًا إلى موقعك الحالي.",
         },
         'en': {
           'min': 'Minutes',
           'min2': 'Minutes',
           'pray_note':
-              'The prayer times used in the application may not be accurate. The purpose of the application is to serve as a reminder and not to solely rely on the mentioned timings. It is the duty of Muslims to ascertain prayer times through the signs designated by the Prophet Muhammad, peace be upon him, and to depend on hearing the call to prayer from the mosque.'
+              'The prayer times used in the application may not be accurate. The purpose of the application is to serve as a reminder and not to solely rely on the mentioned timings. It is the duty of Muslims to ascertain prayer times through the signs designated by the Prophet Muhammad, peace be upon him, and to depend on hearing the call to prayer from the mosque.',
+          'accessMessage':
+              'Azzan Time needs access to your location in order to provide accurate prayer times based on your current location.',
         },
       };
 }

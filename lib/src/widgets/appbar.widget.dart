@@ -1,11 +1,11 @@
-import 'package:azzan/src/providers/main.provider.dart';
-import 'package:azzan/src/widgets/loading.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../classes/themes.class.dart';
+import '../providers/main.provider.dart';
 import '../providers/time.provider.dart';
+import 'loading.widget.dart';
 
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   const AppBarWidget({

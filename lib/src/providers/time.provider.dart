@@ -1,17 +1,20 @@
-import 'package:azzan/src/providers/main.provider.dart';
 import 'package:get/get.dart';
 
 import '../classes/services.class.dart';
 import '../models/praytime.model.dart';
+import 'main.provider.dart';
 
 class TimeProvider extends GetxController {
   final RxBool _isLoading = RxBool(false);
   final RxInt _current = RxInt(0);
   final Rx<List<PrayTime>> _times = Rx<List<PrayTime>>([]);
+  final Rx<String?> _timeZone = Rx<String?>(null);
 
   bool get isLoading => _isLoading.value;
   int get current => _current.value;
   List<PrayTime> get times => _times.value;
+  String? get timeZone => _timeZone.value;
+
   PrayTime? currentTime() {
     if (_times.value.isEmpty) return null;
     PrayTime currentTime = _times.value[current];
@@ -33,10 +36,18 @@ class TimeProvider extends GetxController {
   load() async {
     setLoading = true;
     final main = Get.find<MainProvider>();
-    final url =
-        'http://api.aladhan.com/v1/timingsByCity?country=${main.country.id}&city=${main.city.title.replaceAll(' ', '')}&method=${main.method.id}';
+    final latitude = main.location?.latitude ?? '0.0';
+    final longitude = main.location?.longitude ?? '0.0';
+    final method = main.method.id;
+    if (latitude == '0.0' || longitude == '0.0') return;
+    final data =
+        '${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year}';
+    final params = '?latitude=$latitude&longitude=$longitude&method=$method';
+    final url = 'http://api.aladhan.com/v1/timings/$data$params';
+
     await Services.getData(url).then((value) {
       if (value == null) return;
+
       final timing = value['timings'] as Map<String, dynamic>;
       final List<PrayTime> times = [];
       final List<String> keys = [
@@ -48,20 +59,36 @@ class TimeProvider extends GetxController {
         'Isha',
       ];
       timing.forEach((key, value) {
+        if (value.toString().contains(' ')) {
+          value = value.toString().split(' ')[0];
+        }
         if (keys.contains(key)) {
-          times.add(PrayTime(keys.indexOf(key), key, value));
+          times.add(
+            PrayTime(
+              keys.indexOf(key),
+              key,
+              value,
+            ),
+          );
         }
       });
+      setTimeZone(value['meta']['timezone']);
       updateTimes(times);
     }).catchError((e) {
       setLoading = false;
-      throw e;
+      // throw e;
     });
     setLoading = false;
   }
 
   updateTimes(List<PrayTime> times) {
     _times.value = times;
+    update();
+  }
+
+  setTimeZone(String? timeZone) {
+    if (timeZone == _timeZone.value) return;
+    _timeZone.value = timeZone;
     update();
   }
 

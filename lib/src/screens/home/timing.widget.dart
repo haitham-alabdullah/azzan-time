@@ -1,7 +1,7 @@
-import 'package:azzan/src/providers/time.provider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../providers/time.provider.dart';
 import '../../widgets/loading.widget.dart';
 import 'time.widget.dart';
 

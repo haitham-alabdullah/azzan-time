@@ -1,12 +1,13 @@
-import 'package:azzan/src/classes/themes.class.dart';
-import 'package:azzan/src/providers/main.provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 
 import 'src/classes/services.class.dart';
+import 'src/classes/themes.class.dart';
 import 'src/classes/translations.class.dart';
 import 'src/core/__main__.dart';
+import 'src/providers/main.provider.dart';
+import 'src/providers/time.provider.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -22,10 +23,26 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      Get.find<MainProvider>().getLocation().then((value) {
+        if (value != null) Get.find<TimeProvider>().load();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => FlutterNativeSplash.remove(),
     );

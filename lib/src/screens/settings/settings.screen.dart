@@ -1,12 +1,9 @@
-import 'package:azzan/src/models/language.model.dart';
-import 'package:azzan/src/providers/main.provider.dart';
-import 'package:azzan/src/widgets/loading.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../models/country.model.dart';
+import '../../models/language.model.dart';
 import '../../models/method.model.dart';
-import '../home/note.widget.dart';
+import '../../providers/main.provider.dart';
 import 'dev_card.widget.dart';
 import 'select_menu.widget.dart';
 
@@ -45,27 +42,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   list: provider.allMethods,
                   onChange: provider.toggleMethod,
                 ),
-                const SizedBox(height: 10),
-                SelectMenu<Country>(
-                  withSrearch: true,
-                  title: 'Country',
-                  def: provider.country,
-                  list: provider.allCountries,
-                  onChange: provider.toggleCountry,
-                ),
-                const SizedBox(height: 10),
-                provider.isLoading
-                    ? const Center(child: Loading())
-                    : SelectMenu<City>(
-                        key: ValueKey(provider.country),
-                        withSrearch: true,
-                        title: 'City',
-                        def: provider.city,
-                        list: provider.allCities,
-                        onChange: provider.toggleCity,
-                      ),
-                const SizedBox(height: 30),
-                const NoteWidget(),
                 const SizedBox(height: 40),
                 const DevCard(),
               ],

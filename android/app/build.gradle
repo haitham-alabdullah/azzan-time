@@ -32,7 +32,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace "com.example.azzan"
+    namespace "com.macberry.azzantime"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
@@ -51,8 +51,8 @@ android {
 
     defaultConfig {
         
-        applicationId "com.macberry.azzan"
-        minSdkVersion flutter.minSdkVersion
+        applicationId "com.macberry.azzantime"
+        minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

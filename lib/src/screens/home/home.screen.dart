@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:azzan/src/providers/time.provider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../providers/time.provider.dart';
 import 'date.widget.dart';
 import 'remining_time.widget.dart';
 import 'timing.widget.dart';
@@ -25,13 +25,12 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Get.find<TimeProvider>().load();
     });
-    timer = Timer.periodic(
-      const Duration(seconds: 1),
-      (Timer t) => Get.find<TimeProvider>().updateCurrentTime(),
-    );
+    timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
+      if (mounted) Get.find<TimeProvider>().updateCurrentTime();
+    });
 
     timer2 = Timer.periodic(
-      const Duration(minutes: 10),
+      const Duration(hours: 1),
       (Timer t) => Get.find<TimeProvider>().load(),
     );
     super.initState();

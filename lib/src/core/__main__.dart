@@ -1,11 +1,13 @@
-import 'package:azzan/src/providers/main.provider.dart';
-import 'package:azzan/src/screens/settings/settings.screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:location/location.dart';
 
 import '../classes/themes.class.dart';
+import '../providers/main.provider.dart';
 import '../screens/home/home.screen.dart';
+import '../screens/settings/settings.screen.dart';
 import '../widgets/appbar.widget.dart';
+import '../widgets/loading.widget.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -50,28 +52,68 @@ class _MainScreenState extends State<MainScreen> {
               child: SizedBox(
                 width: double.infinity,
                 height: double.infinity,
-                child: GetBuilder<MainProvider>(builder: (provider) {
-                  return AnimatedSwitcher(
-                    transitionBuilder: (child, animation) {
-                      return FadeTransition(
-                        opacity: Tween<double>(begin: 0.0, end: 1.0)
-                            .animate(animation),
-                        child: child,
-                      );
-                    },
-                    layoutBuilder: (currentChild, previousChildren) {
-                      if (currentChild != null &&
-                          currentChild.key == const ValueKey('settings')) {
-                        return Expanded(child: currentChild);
+                child: FutureBuilder(
+                    future: Get.find<MainProvider>().getLocation(),
+                    builder: (context, snap) {
+                      if (snap.connectionState == ConnectionState.waiting) {
+                        return const Center(child: Loading());
                       }
-                      return currentChild ?? const SizedBox();
-                    },
-                    duration: const Duration(milliseconds: 500),
-                    child: provider.isSettings
-                        ? const SettingsScreen(key: ValueKey('settings'))
-                        : const HomeScreen(key: ValueKey('home')),
-                  );
-                }),
+                      if (snap.hasData && snap.data != null) {
+                        return GetBuilder<MainProvider>(builder: (provider) {
+                          return AnimatedSwitcher(
+                            transitionBuilder: (child, animation) {
+                              return FadeTransition(
+                                opacity: Tween<double>(begin: 0.0, end: 1.0)
+                                    .animate(animation),
+                                child: child,
+                              );
+                            },
+                            layoutBuilder: (currentChild, previousChildren) {
+                              if (currentChild != null &&
+                                  currentChild.key ==
+                                      const ValueKey('settings')) {
+                                return Expanded(child: currentChild);
+                              }
+                              return currentChild ?? const SizedBox();
+                            },
+                            duration: const Duration(milliseconds: 500),
+                            child: provider.isSettings
+                                ? const SettingsScreen(
+                                    key: ValueKey('settings'))
+                                : const HomeScreen(key: ValueKey('home')),
+                          );
+                        });
+                      }
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 40),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'accessMessage'.tr,
+                                textAlign: TextAlign.center,
+                                style: Themes.textStyle.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              ElevatedButton(
+                                onPressed: () async {
+                                  await Location().requestPermission();
+                                  setState(() {});
+                                },
+                                child: Text(
+                                  'Request Location Access'.tr,
+                                  textAlign: TextAlign.center,
+                                  style: Themes.textStyle,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
               ),
             ),
           ],

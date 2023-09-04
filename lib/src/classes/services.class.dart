@@ -82,11 +82,8 @@ class Services {
   }
 
   static registerProviders() async {
-    final main = Get.put(MainProvider());
-    await main.getFirstTime();
-    await main.load();
+    Get.put(MainProvider());
     Get.put(TimeProvider());
-    // await timeProvider.load();
   }
 
   static toArNumber(String string) {

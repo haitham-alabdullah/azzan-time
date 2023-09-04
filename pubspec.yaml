@@ -1,4 +1,4 @@
-name: azzan
+name: azzantime
 description: Azzan Timing App.
 publish_to: 'none' 
 version: 1.0.0+1
@@ -17,6 +17,7 @@ dependencies:
 
   #logic
   get: ^4.6.5
+  location: ^5.0.0
   hijri: ^3.0.0
   dio: ^5.3.2
   shared_preferences: ^2.2.0

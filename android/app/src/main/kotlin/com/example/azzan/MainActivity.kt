@@ -1,4 +1,4 @@
-package com.example.azzan
+package com.macberry.azzantime
 
 import io.flutter.embedding.android.FlutterActivity
 
