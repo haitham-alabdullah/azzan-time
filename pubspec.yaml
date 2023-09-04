@@ -1,7 +1,7 @@
 name: azzantime
 description: Azzan Timing App.
 publish_to: 'none' 
-version: 1.0.0+1
+version: 2.0.0
 
 environment:
   sdk: '>=3.0.6 <4.0.0'
