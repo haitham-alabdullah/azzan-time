@@ -1,5 +1,7 @@
+import 'package:azzantime/src/widgets/loading.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 
 import 'src/classes/services.class.dart';
@@ -8,6 +10,7 @@ import 'src/classes/translations.class.dart';
 import 'src/core/__main__.dart';
 import 'src/providers/main.provider.dart';
 import 'src/providers/time.provider.dart';
+import 'src/widgets/wrapper.widget.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -24,12 +27,16 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  final main = Get.find<MainProvider>();
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      Get.find<MainProvider>().getLocation().then((value) {
-        if (value != null) Get.find<TimeProvider>().load();
-      });
+      if (main.hasLocation) {
+        main.getLocation().then((value) {
+          if (value != null) Get.find<TimeProvider>().load();
+        });
+      }
     }
   }
 
@@ -44,20 +51,73 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback(
-      (_) => FlutterNativeSplash.remove(),
+      (_) {
+        FlutterNativeSplash.remove();
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final provider = Get.find<MainProvider>();
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Azzan-Timing',
       theme: Themes.themeData,
-      locale: provider.locale,
+      locale: main.locale,
       fallbackLocale: const Locale('en'),
-      home: const MainScreen(),
+      home: FutureBuilder(
+          future: main.getLocation(),
+          builder: (context, snap) {
+            if (snap.connectionState == ConnectionState.waiting) {
+              return const WrapperWidget(Center(child: Loading()));
+            } else if (snap.hasData) {
+              return const MainScreen();
+            }
+            return WrapperWidget(
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'accessMessage'.tr,
+                        textAlign: TextAlign.center,
+                        style: Themes.textStyle.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () async {
+                          final main = Get.find<MainProvider>();
+                          if (await main.getLocationPermission()) {
+                            await main.getLocation();
+                          } else {
+                            if (await Geolocator.isLocationServiceEnabled()) {
+                              await Geolocator.openAppSettings();
+                            } else {
+                              await Geolocator.openLocationSettings();
+                            }
+                          }
+                          if (main.hasLocation) {
+                            Get.find<TimeProvider>()
+                                .load()
+                                .then((value) => setState(() {}));
+                          }
+                        },
+                        child: Text(
+                          'Request Location Access'.tr,
+                          textAlign: TextAlign.center,
+                          style: Themes.textStyle,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }),
       translations: AzzanTranslations(),
     );
   }
