@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class PrayTime {
   final int id;
   final String title;
@@ -20,5 +22,30 @@ class PrayTime {
 
   getDateTime(DateTime now) {
     return DateTime(now.year, now.month, now.day, hours(), minutes());
+  }
+
+  String storeString() {
+    return jsonEncode({
+      'id': id,
+      'title': title,
+      'time': time,
+    });
+  }
+
+  factory PrayTime.fromString(String time) {
+    final times = jsonDecode(time);
+    return PrayTime(
+      times['id'],
+      times['title'],
+      times['time'],
+    );
+  }
+
+  @override
+  bool operator ==(other) {
+    return other is PrayTime &&
+        id == other.id &&
+        title == other.title &&
+        time == other.time;
   }
 }

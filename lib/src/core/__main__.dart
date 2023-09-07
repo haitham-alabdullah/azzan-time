@@ -15,6 +15,8 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,58 +52,26 @@ class _MainScreenState extends State<MainScreen> {
               child: SizedBox(
                 width: double.infinity,
                 height: double.infinity,
-                child: Builder(builder: (context) {
-                  final hasLocation = Get.find<MainProvider>().hasLocation;
-                  if (hasLocation) {
-                    return GetBuilder<MainProvider>(builder: (provider) {
-                      return AnimatedSwitcher(
-                        transitionBuilder: (child, animation) {
-                          return FadeTransition(
-                            opacity: Tween<double>(begin: 0.0, end: 1.0)
-                                .animate(animation),
-                            child: child,
-                          );
-                        },
-                        layoutBuilder: (currentChild, previousChildren) {
-                          if (currentChild != null &&
-                              currentChild.key == const ValueKey('settings')) {
-                            return Expanded(child: currentChild);
-                          }
-                          return currentChild ?? const SizedBox();
-                        },
-                        duration: const Duration(milliseconds: 500),
-                        child: provider.isSettings
-                            ? const SettingsScreen(key: ValueKey('settings'))
-                            : const HomeScreen(key: ValueKey('home')),
+                child: GetBuilder<MainProvider>(builder: (provider) {
+                  return AnimatedSwitcher(
+                    transitionBuilder: (child, animation) {
+                      return FadeTransition(
+                        opacity: Tween<double>(begin: 0.0, end: 1.0)
+                            .animate(animation),
+                        child: child,
                       );
-                    });
-                  }
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 40),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'accessMessage'.tr,
-                            textAlign: TextAlign.center,
-                            style: Themes.textStyle.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed: Get.find<MainProvider>().getLocation,
-                            child: Text(
-                              'Request Location Access'.tr,
-                              textAlign: TextAlign.center,
-                              style: Themes.textStyle
-                                  .copyWith(color: Themes.textColor),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    },
+                    layoutBuilder: (currentChild, previousChildren) {
+                      if (currentChild != null &&
+                          currentChild.key == const ValueKey('settings')) {
+                        return Expanded(child: currentChild);
+                      }
+                      return currentChild ?? const SizedBox();
+                    },
+                    duration: const Duration(milliseconds: 500),
+                    child: provider.isSettings
+                        ? const SettingsScreen(key: ValueKey('settings'))
+                        : const HomeScreen(key: ValueKey('home')),
                   );
                 }),
               ),

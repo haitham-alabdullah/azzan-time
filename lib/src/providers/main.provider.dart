@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/language.model.dart';
@@ -17,8 +17,7 @@ class MainProvider extends GetxController {
     Method('4', 'Umm Al-Qura University, Makkah'),
   );
 
-  final Rx<LocationData> _location =
-      Rx<LocationData>(LocationData.fromMap(<String, dynamic>{
+  final Rx<Position> _location = Rx<Position>(Position.fromMap({
     "latitude": 0.0,
     "longitude": 0.0,
   }));
@@ -28,9 +27,9 @@ class MainProvider extends GetxController {
   Locale get locale => _locale.value.locale;
   Language get lang => _locale.value;
   Method get method => _method.value;
-  LocationData get location => _location.value;
+  Position get location => _location.value;
   bool get hasLocation =>
-      _location.value.latitude != 0.0 && _location.value.longitude != 0.0;
+      _location.value.altitude != 0.0 || _location.value.longitude != 0.0;
 
   List<Language> get languages => [
         Language('العربية', const Locale('ar')),
@@ -70,7 +69,7 @@ class MainProvider extends GetxController {
     storeMethod(method);
   }
 
-  void toggleLocation(LocationData location) {
+  void toggleLocation(Position location) {
     _location.value = location;
     update();
     storeLocation(location);
@@ -86,10 +85,10 @@ class MainProvider extends GetxController {
     await prefs.setString('method', method.toString());
   }
 
-  storeLocation(LocationData location) async {
+  storeLocation(Position location) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(
-        'location', "${location.latitude}|${location.longitude}");
+        'location', "${location.altitude}|${location.longitude}");
   }
 
   Future<void> getLanguage() async {
@@ -109,43 +108,54 @@ class MainProvider extends GetxController {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final location = prefs.getString('location');
     if (location is String) {
-      _location.value = LocationData.fromMap({
+      _location.value = Position.fromMap({
         "latitude": double.tryParse(location.split('|')[0]),
         "longitude": double.tryParse(location.split('|')[1]),
       });
     }
   }
 
-  getLocationPermission() async {
-    Location location = Location();
-
+  Future<bool> getLocationPermission() async {
     bool serviceEnabled;
-    PermissionStatus permissionGranted;
+    LocationPermission permission;
 
-    serviceEnabled = await location.serviceEnabled();
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      serviceEnabled = await location.requestService();
-      if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      return false;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
         return false;
       }
     }
 
-    permissionGranted = await location.hasPermission();
-    if (permissionGranted == PermissionStatus.denied) {
-      permissionGranted = await location.requestPermission();
-      if (permissionGranted != PermissionStatus.granted) {
-        return false;
-      }
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return false;
     }
 
     return true;
   }
 
-  Future<LocationData?> getLocation() async {
-    Location location = Location();
-    final locationData = await location.getLocation();
-    Get.find<MainProvider>().toggleLocation(locationData);
-    return locationData;
+  Future<Position?> getLocation() async {
+    if (await getLocationPermission()) {
+      final locationData = await Geolocator.getCurrentPosition();
+      Get.find<MainProvider>().toggleLocation(locationData);
+      return locationData;
+    }
+    return null;
   }
 
   @override

@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../classes/services.class.dart';
 import '../models/praytime.model.dart';
@@ -33,7 +34,7 @@ class TimeProvider extends GetxController {
     super.onInit();
   }
 
-  load() async {
+  Future<void> load() async {
     setLoading = true;
     final main = Get.find<MainProvider>();
     final latitude = main.location.latitude;
@@ -41,8 +42,8 @@ class TimeProvider extends GetxController {
     final method = main.method.id;
     if (latitude == 0.0 || longitude == 0.0) {
       setLoading = false;
+      return;
     }
-
     final data =
         '${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year}';
     final params = '?latitude=$latitude&longitude=$longitude&method=$method';
@@ -86,12 +87,35 @@ class TimeProvider extends GetxController {
   updateTimes(List<PrayTime> times) {
     _times.value = times;
     update();
+    storeTimes(times);
   }
 
   setTimeZone(String? timeZone) {
     if (timeZone == _timeZone.value) return;
     _timeZone.value = timeZone;
     update();
+  }
+
+  Future<void> storeTimes(List<PrayTime> times) async {
+    final prefs = await SharedPreferences.getInstance();
+    final List<String> timesToStore = [];
+    for (var time in times) {
+      timesToStore.add(time.storeString());
+    }
+    await prefs.setStringList('times', timesToStore);
+  }
+
+  Future<void> readTimes() async {
+    final prefs = await SharedPreferences.getInstance();
+    final List<String>? timesToRead = prefs.getStringList('times');
+    if (timesToRead is List<String>) {
+      final List<PrayTime> times = [];
+      for (var time in timesToRead) {
+        times.add(PrayTime.fromString(time));
+      }
+      _times.value = times;
+      update();
+    }
   }
 
   PrayTime? setCurrentTime() {
